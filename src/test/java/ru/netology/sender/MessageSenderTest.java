@@ -16,6 +16,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.netology.entity.Country.RUSSIA;
 import static ru.netology.entity.Country.USA;
+import static ru.netology.sender.MessageSenderImpl.IP_ADDRESS_HEADER;
 
 /**
  * @author Aleksey Anikeev aka AgentChe
@@ -33,6 +34,7 @@ public class MessageSenderTest {
         geoService = Mockito.mock(GeoService.class);
         localizationService = Mockito.mock(LocalizationService.class);
         messageSenderImpl = new MessageSenderImpl(geoService, localizationService);
+        System.out.println();
     }
 
     @Test
@@ -40,7 +42,7 @@ public class MessageSenderTest {
     void shouldBeRussia() {
         Mockito.when(geoService.byIp("172.")).thenReturn(new Location("Moscow", Country.RUSSIA, null, 0));
         Mockito.when(localizationService.locale(RUSSIA)).thenReturn("Добро пожаловать");
-        Map<String, String> headers = Map.of("x-real-ip", "172.");
+        Map<String, String> headers = Map.of(IP_ADDRESS_HEADER, "172.");
         assertEquals("Добро пожаловать", messageSenderImpl.send(headers));
     }
 
@@ -49,7 +51,7 @@ public class MessageSenderTest {
     void shouldBeEnglish() {
         Mockito.when(geoService.byIp("96.")).thenReturn(new Location("New York", Country.USA, null, 0));
         Mockito.when(localizationService.locale(USA)).thenReturn("Welcome");
-        Map<String, String> headers = Map.of("x-real-ip", "96.");
+        Map<String, String> headers = Map.of(IP_ADDRESS_HEADER, "96.");
         assertEquals("Welcome", messageSenderImpl.send(headers));
     }
 }
